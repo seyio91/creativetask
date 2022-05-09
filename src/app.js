@@ -3,14 +3,15 @@ const cors = require("cors");
 const morgan = require("morgan");
 const mongoose = require("mongoose");
 const logger = require("./utils/logger");
+const {PORT, MONGO_URI, NODE_ENV} = require('./utils/config')
 
 mongoose
-  .connect("mongodb://localhost/chattest", {
+  .connect(MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
   .then(() => logger("Connected to Mongo"))
-  .catch((err) => logger("cannot connect to mongo"));
+  .catch((err) => logger(err));
 
 const app = express();
 app.use(express.json());
@@ -22,9 +23,9 @@ app.use(
   })
 );
 
-if (app.get("env") === "development") {
+if (NODE_ENV === "development") {
   app.use(morgan("tiny"));
-  appDebugger("Enabling Morgan Logger");
+  logger("Enabling Morgan Logger");
 }
 
 const foods = [
@@ -37,6 +38,6 @@ app.get("/foods", (req, res) => {
   res.json(foods);
 });
 
-app.listen(3001, () => {
-  logger("App running on localhost:3001");
+app.listen(PORT, () => {
+  logger(`App running on port ${port}`);
 });
