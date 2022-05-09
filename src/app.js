@@ -4,6 +4,7 @@ const morgan = require("morgan");
 
 const logger = require("./utils/logger");
 const { PORT, NODE_ENV } = require("./utils/config");
+const { userRouter } = require("./routes");
 
 require('./connection')()
 
@@ -30,15 +31,7 @@ if (NODE_ENV === "development") {
   logger.info("Enabling Morgan Logger");
 }
 
-const foods = [
-  { id: 1, description: "burritos" },
-  { id: 2, description: "quesadillas" },
-  { id: 3, description: "churos" },
-];
-
-app.get("/foods", (req, res) => {
-  res.json(foods);
-});
+app.use("/api/", userRouter);
 
 app.listen(PORT, () => {
   logger.info(`App running on port ${PORT}`);
