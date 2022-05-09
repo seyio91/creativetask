@@ -4,5 +4,6 @@ module.exports = {
     PORT: process.env.PORT || 3001,
     // MONGO_URI: `mongodb://${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DB_NAME}` || "mongodb://localhost/chattest",
     MONGO_URI: "mongodb://localhost/chattest",
-    NODE_ENV: process.env.NODE_ENV || 'development'
+    NODE_ENV: process.env.NODE_ENV || 'development',
+    ROUNDS: process.env.NODE_ENV || 10
   };
