@@ -1,12 +1,12 @@
-const prodLogger = require('./prodLogger')
+const prodLogger = require("./prodLogger");
 
 let logger = null;
 
 if (process.env.NODE_ENV === "production") {
-    logger = prodLogger()
+  logger = prodLogger();
 } else {
-    // Seperate Loggers can be configured for different environments
-    logger = prodLogger()
+  // Seperate Loggers can be configured for different environments
+  logger = prodLogger();
 }
 
 module.exports = logger;

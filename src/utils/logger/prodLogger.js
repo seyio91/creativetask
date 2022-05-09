@@ -3,7 +3,7 @@ const { combine, timestamp, json } = format;
 
 const prodLogger = () => {
   return createLogger({
-    level: "debug",
+    level: "info",
     format: combine(timestamp(), json()),
 
     defaultMeta: { service: "user-service" },

@@ -1,17 +1,19 @@
 const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
-const mongoose = require("mongoose");
-const logger = require("./utils/logger");
-const {PORT, MONGO_URI, NODE_ENV} = require('./utils/config')
 
-mongoose
-  .connect(MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => logger("Connected to Mongo"))
-  .catch((err) => logger(err));
+const logger = require("./utils/logger");
+const { PORT, NODE_ENV } = require("./utils/config");
+
+require('./connection')()
+
+// mongoose
+//   .connect(MONGO_URI, {
+//     useNewUrlParser: true,
+//     useUnifiedTopology: true,
+//   })
+//   .then(() => logger.info("Connected to Mongo"))
+//   .catch((err) => logger.info(err));
 
 const app = express();
 app.use(express.json());
@@ -25,7 +27,7 @@ app.use(
 
 if (NODE_ENV === "development") {
   app.use(morgan("tiny"));
-  logger("Enabling Morgan Logger");
+  logger.info("Enabling Morgan Logger");
 }
 
 const foods = [
@@ -39,5 +41,5 @@ app.get("/foods", (req, res) => {
 });
 
 app.listen(PORT, () => {
-  logger(`App running on port ${port}`);
+  logger.info(`App running on port ${PORT}`);
 });
