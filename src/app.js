@@ -6,15 +6,8 @@ const logger = require("./utils/logger");
 const { PORT, NODE_ENV } = require("./utils/config");
 const { userRouter } = require("./routes");
 
+// DB Connection Configuration
 require('./connection')()
-
-// mongoose
-//   .connect(MONGO_URI, {
-//     useNewUrlParser: true,
-//     useUnifiedTopology: true,
-//   })
-//   .then(() => logger.info("Connected to Mongo"))
-//   .catch((err) => logger.info(err));
 
 const app = express();
 app.use(express.json());
@@ -32,6 +25,10 @@ if (NODE_ENV === "development") {
 }
 
 app.use("/api/", userRouter);
+
+app.all('*', (req, res) => res.status(404).json({
+    error: 'Sorry, Page not found'
+}))
 
 app.listen(PORT, () => {
   logger.info(`App running on port ${PORT}`);

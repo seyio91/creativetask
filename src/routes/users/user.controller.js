@@ -1,5 +1,4 @@
 const UserService = require("./user.service");
-const _ = require("lodash");
 const hashPassword = require("../../utils/password");
 
 // const
@@ -12,13 +11,7 @@ const createUser = async (req, res) => {
       return res.status(400).json({ error: "User Already Exists" });
     req.body.password = hashPassword(password);
     const user = await UserService.createUser(req.body);
-    const returnedUser = _.pick(user, [
-      "_id",
-      "first_name",
-      "last_name",
-      "email",
-    ]);
-    return res.status(200).json(returnedUser);
+    return res.status(200).json(user);
   } catch (error) {
     return res.status(400).json({ error: error.message });
   }

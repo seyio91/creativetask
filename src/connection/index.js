@@ -1,8 +1,8 @@
 const mongoconnection = require("./mongodb");
+const { DB_ENGINE } = require('../utils/config')
 
 let dbconnection = null;
 
-let DB_ENGINE = "mongodb";
 if (DB_ENGINE == "mongodb") {
     // Support for multiple DB engine connection
     dbconnection = mongoconnection;

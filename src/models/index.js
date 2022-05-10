@@ -3,8 +3,8 @@ const mongoose = require('mongoose')
 const user = {
     first_name: String,
     last_name: String,
-    email: String,
-    password: String,
+    email: { type : String , unique : true, required : true, dropDups: true },
+    password: { type: String, select: false },
     created_at: {type: Date, default: Date.now},
     conversations: [
         {

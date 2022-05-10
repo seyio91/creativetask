@@ -10,7 +10,7 @@ const dbconnection = () => {
     })
     .then(() => logger.info("Connected to Mongo"))
     .catch((err) => {
-      logger.error(err)
+      logger.error(err.message)
       process.exit(1)
     });
 };
