@@ -6,7 +6,9 @@ const logger = require("./utils/logger");
 const { PORT, NODE_ENV } = require("./utils/config");
 const { userRouter } = require("./routes");
 
-// DB Connection Configuration
+/**
+ * DB Connection Configuration.
+ */
 require('./connection')()
 
 const app = express();
@@ -19,17 +21,27 @@ app.use(
   })
 );
 
+/**
+ * Enable Endpoint Logging for Development Environment.
+ */
 if (NODE_ENV === "development") {
   app.use(morgan("tiny"));
   logger.info("Enabling Morgan Logger");
 }
 
+/**
+ * Express Routes.
+ */
 app.use("/api/", userRouter);
+
 
 app.all('*', (req, res) => res.status(404).json({
     error: 'Sorry, Page not found'
 }))
 
+/**
+ * StartUp Command.
+ */
 app.listen(PORT, () => {
   logger.info(`App running on port ${PORT}`);
 });
