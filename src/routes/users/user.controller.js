@@ -25,7 +25,10 @@ const createUser = async (req, res) => {
 const singleUser = async (req, res) => {
   // change to params
   const result = await UserService.findUser(req.body.email);
-  return res.status(200).json({ result });
+  if (!result){
+    return res.status(404).json({error: "User not Found"})
+  }
+  return res.status(200).json(result);
 };
 
 /**

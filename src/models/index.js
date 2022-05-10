@@ -7,7 +7,7 @@ const user = {
   first_name: String,
   last_name: String,
   email: { type: String, unique: true, required: true, dropDups: true },
-  password: { type: String, select: false },
+  password: { type: String, select: false, required: true },
   created_at: { type: Date, default: Date.now },
   conversations: [
     {

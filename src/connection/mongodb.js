@@ -10,6 +10,7 @@ const dbconnection = () => {
     })
     .then(() => logger.info("Connected to Mongo"))
     .catch((err) => {
+      logger.error("DB Connection Refused")
       logger.error(err.message)
       process.exit(1)
     });
