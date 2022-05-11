@@ -1,0 +1,26 @@
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+  - role: control-plane
+    image: kindest/node:v1.18.20
+    kubeadmConfigPatches:
+      - |
+        kind: InitConfiguration
+        nodeRegistration:
+          kubeletExtraArgs:
+            node-labels: "ingress-ready=true"     
+    extraMounts:
+      - hostPath: /opt/local-path-provisioner
+        containerPath: /opt/local-path-provisioner
+    extraPortMappings:
+      - containerPort: 8000
+        hostPort: 80
+        protocol: TCP
+      - containerPort: 8443
+        hostPort: 443
+        protocol: TCP
+      - containerPort: 9000
+        hostPort: 9000
+        protocol: TCP
+  # - role: worker
+  # - role: worker
