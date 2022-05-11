@@ -1,0 +1,50 @@
+ingressClass:
+  enabled: true
+  isDefaultClass: true
+
+ingressRoute:
+  dashboard:
+    enabled: true
+
+additionalArguments:
+  - "--log.level=INFO"
+  - "--serversTransport.insecureSkipVerify=true"
+
+providers:
+  kubernetesCRD:
+    namespaces:
+      - default
+      - traefik
+  kubernetesIngress:
+    namespaces:
+      - default
+      - traefik
+
+hostNetwork: true
+nodeSelector:
+  ingress-ready: "true"
+
+tolerations:
+  - key: "node-role.kubernetes.io/master"
+    effect: "NoSchedule"
+
+ports:
+  traefik:
+    port: 9000
+    expose: true
+    exposedPort: 9000
+    protocol: TCP
+  web:
+    port: 8000
+    expose: true
+    exposedPort: 80
+    protocol: TCP
+  websecure:
+    port: 8443
+    expose: true
+    exposedPort: 443
+    protocol: TCP
+
+service:
+  enabled: true
+  type: NodePort
