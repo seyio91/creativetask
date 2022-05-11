@@ -1,0 +1,18 @@
+{{- if .Values.backend.ingress.enabled -}}
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ .Release.Name }}-ingress
+  labels:
+    {{- include "creativesolutions.labels" . | nindent 4 }}
+spec:
+  entryPoints:
+    - web
+  routes:
+  - match: PathPrefix(`/`)
+    kind: Rule
+    services:
+    - name: {{ include "creativesolutions.servicename" . }}
+      port: {{ .Values.backend.service.port }}
+{{- end -}}
+

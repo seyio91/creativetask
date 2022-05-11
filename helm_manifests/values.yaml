@@ -1,0 +1,38 @@
+name: creativesolutions
+projectname: test
+
+serviceaccount:
+  create: true
+  name: application-sa
+
+mongodb:
+  auth:
+    enabled: false
+  service:
+    nameOverride: mongodb
+
+backend:
+  containerPort: 8080
+  image: 
+    repository: seyio/creativesolutions:v0.01
+    pullPolicy: IfNotPresent
+  tier: backend
+  service: 
+    port: 80
+    type: ClusterIP
+  ingress:
+    enabled: true
+  replicaCount: 1
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  environments:
+    NODE_ENV: production
+    MONGO_URI: mongodb://creativesolutions-mongodb/chattest
+
+nameOverride: ""
+fullnameOverride: ""

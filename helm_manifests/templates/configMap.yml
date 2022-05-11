@@ -1,0 +1,15 @@
+{{- if .Values.backend.environments -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-configmap
+  labels:
+    {{- include "creativesolutions.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": pre-install
+    "helm.sh/hook-weight": "-4"
+data:
+{{- range $k, $v := .Values.backend.environments }}
+  {{ $k }}: {{ $v | quote }}
+{{- end }}
+{{- end -}}

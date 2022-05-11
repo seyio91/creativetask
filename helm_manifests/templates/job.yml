@@ -1,0 +1,29 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "creativesolutions.deploymentname" . }}-job
+  labels:
+    {{- include "creativesolutions.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": post-install
+    "helm.sh/hook-weight": "1"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: 5
+  template:
+    spec:
+      restartPolicy: Never
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}-job
+          image: "{{ .Values.backend.image.repository }}"
+          imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
+          command: ["npm", "run", "migrate"]
+          {{- if .Values.backend.environments }}
+          envFrom:
+          - configMapRef:
+              name: {{ .Release.Name }}-configmap
+          {{- end }}
