@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "creativesolutions.deploymentname" . }}-test-connection"
+  labels:
+    {{- include "creativesolutions.appLabels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget
+      imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
+      image: busybox
+      command: ['wget']
+      args: ['{{ include "creativesolutions.servicename" . }}:{{ .Values.backend.service.port }}/api/']
+  restartPolicy: Never
