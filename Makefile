@@ -41,6 +41,10 @@ ifeq ($(KIND_BIN),)
 	$(error Cannot find Kind binary! Please install it from: https://kind.sigs.k8s.io/)
 endif
 
+ifeq ($(DOCKER_BIN),)
+	$(error Cannot find Docker binary! )
+endif
+
 ifeq ($(CONTAINER_TEST_BIN),)
 	$(error Cannot find container-structure-test binary! Please install it)
 endif
@@ -57,6 +61,7 @@ destroy_kind_cluster:
 	@$(KIND_BIN) delete cluster --name $(LOCAL_CLUSTER_NAME)
 
 # Load locally built images into Kind
+# Mongodb was loaded to compensate for slow internet speed
 .ONESHELL:
 load_local_images:
 	@make -s seperator_line PLACEHOLDER="Loading Local Images ..."
@@ -68,7 +73,7 @@ endif
 	@$(DOCKER_BIN)  pull $(MONGO_IMAGE)
 	@kind load docker-image --name $(LOCAL_CLUSTER_NAME) $(MONGO_IMAGE)
 
-# Deploy local infra tools like Traefik
+
 .ONESHELL:
 deploy_ingress: install_kind_cluster
 	@make -s seperator_line PLACEHOLDER="Installing Traefik Ingress Controller ..."
@@ -109,7 +114,6 @@ endif
 	@echo "Building Application Image ..."
 	cd $(APP_DIR) && $(DOCKER_BIN) build -t $(IMAGE) .
 
-# Image name does not matter
 .ONESHELL:
 build_test_image:
 	@echo "Building Test Image ..."
@@ -129,7 +133,7 @@ endif
 .ONESHELL:
 test_application_image:
 	@make -s seperator_line PLACEHOLDER="Test Application Image"
-	$(CONTAINER_TEST_BIN) test --image $(APP)-test --config config.yaml
+	$(CONTAINER_TEST_BIN) test --image $(APP)-test --config ./$(LOCAL_TOOLS_FOLDER)/config.yaml
 
 seperator_line:
 	@echo -e "#############################\n## $(PLACEHOLDER) ##\n#############################"
