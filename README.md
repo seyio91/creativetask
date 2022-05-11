@@ -51,7 +51,22 @@ npm run test
    
 `- POST /api/createUser Create user account`
 
+```json
+{
+	"first_name": "obaweya",
+	"last_name": "dayo",
+	"email": "sesan@yahoo.com",
+	"password": "randompassword"
+}
+```
+
 `- POST /api/singleUser Get a single User`
+
+```json
+{
+	"email":"admin@gmail.com"
+}
+```
 
 `- GET /api/ Get all Users`
 
