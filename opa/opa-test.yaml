@@ -1,0 +1,12 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: opatest
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['sleep']
+      args: ['300']
+  restartPolicy: Never

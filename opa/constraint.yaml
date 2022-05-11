@@ -1,0 +1,94 @@
+apiVersion: templates.gatekeeper.sh/v1beta1
+kind: ConstraintTemplate
+metadata:
+  name: k8sallowedusers
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sAllowedUsers
+      validation:
+        openAPIV3Schema:
+          properties:
+            runAsUser:
+              type: object
+              properties:
+                rule:
+                  type: string
+                users:
+                  type: array
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8sallowedusers
+        violation[{"msg": msg}] {
+          fields := ["runAsUser"]
+          field := fields[_]
+          container := input_containers[_]
+          params := input.parameters[field]
+          msg := get_user_violation(params, container)
+        }
+
+        get_user_violation(params, container) = msg {
+          rule := params.rule
+          provided_user := get_field_value("runAsUser", container, input.review)
+          not contains(input.parameters.runAsUser.users, provided_user)
+          msg := sprintf("Container %v is attempting to run as disallowed user %v. Allowed runAsUser: %v", [container.name, provided_user, params])
+        }
+        get_user_violation(params, container) = msg {
+          not get_field_value("runAsUser", container, input.review)
+          params.rule != "RunAsAny"
+          msg := sprintf("Container %v is attempting to run without a required securityContext/runAsUser. Allowed runAsUser: %v", [container.name, params])
+        }
+
+        get_user_violation(params, container) = msg {
+          params.rule = "MustRunAsNonRoot"
+          not get_field_value("runAsUser", container, input.review)
+          not get_field_value("runAsNonRoot", container, input.review)
+          msg := sprintf("Container %v is attempting to run without a required securityContext/runAsNonRoot or securityContext/runAsUser != 0", [container.name])
+        }
+        contains(users, provided_user) {
+          users[_] = provided_user
+        }
+
+        get_field_value(field, container, review) = out {
+          container_value := get_seccontext_field(field, container)
+          out := container_value
+        }
+
+        get_field_value(field, container, review) = out {
+          not get_seccontext_field(field, container)
+          review.kind.kind == "Pod"
+          pod_value := get_seccontext_field(field, review.object.spec)
+          out := pod_value
+        }
+        get_seccontext_field(field, obj) = out {
+          out = obj.securityContext[field]
+        }
+        input_containers[c] {
+          c := input.review.object.spec.containers[_]
+        }
+        input_containers[c] {
+          c := input.review.object.spec.initContainers[_]
+        }
+
+
+---
+
+apiVersion: templates.gatekeeper.sh/v1beta1
+kind: ConstraintTemplate
+metadata:
+  name: k8sallowedsa
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sAllowedSA
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8sallowedsa
+        violation[{"msg": msg}] {
+          input.review.object.spec.serviceAccountName = "default"
+          msg := "Default Service Account is not permitted"
+        }

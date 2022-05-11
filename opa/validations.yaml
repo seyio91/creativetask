@@ -1,0 +1,27 @@
+---
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sAllowedUsers
+metadata:
+  name: pods-allowed-users
+spec:
+  match:
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Pod"]
+  parameters:
+    runAsUser:
+      rule: MustRunAsNonRoot #MustRunAs # MustRunAsNonRoot # RunAsAny
+      users: [100,101,102]
+
+---
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sAllowedSA
+metadata:
+  name: denydefaultsa
+spec:
+  match:
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Pod"]
+
+
